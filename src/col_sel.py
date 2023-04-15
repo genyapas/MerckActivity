@@ -14,6 +14,6 @@ for i in range(7,8):
     occurence_0.append(col_list.count(0))
     if col_list.count(0)==0:
       fin_col.append(t)
-  print(fin_col)
+  print(fin_col, df.columns[fin_col])
   #col_sel.append(min(occurence_0))
   #print(col_sel, occurence_0.count(0))
