@@ -26,26 +26,26 @@ class Net(nn.Module):
 
 for i in range(7,8):
     input_d=[]
-    df=pd.read_csv(file_name.format(i), nrows=10)
+    df=pd.read_csv(file_name.format(i))
     input_d=int(len(df.columns)-2)
     net=Net(y=input_d)
-    print(net)
+    #print(net)
     input=torch.FloatTensor(df.iloc[:,2:len(df.columns)].values)
-    print(input, len(df.columns))
+    #print(input, len(df.columns))
     target=torch.FloatTensor(df.iloc[:,1].values)
-    target=target.view(10, 1)
+    target=target.view(len(df.index), 1)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
     for epoch in range(10):
         running_loss = 0.0
-        optimizer.zero_grad()
         output=net(input)
         loss = criterion(output, target)
-        print(output)
+        print(loss.item())
         loss.backward()
+        optimizer.zero_grad()
         optimizer.step()
         running_loss += loss.item()
-        #if n % 8 == 7:
-        print(f'[{epoch + 1}, {n + 1:5d}] loss: {running_loss / 10:.3f}')
-        running_loss = 0.0
+        if n % 10 == 9:
+            print(f'[{epoch + 1}, {n + 1:5d}] loss: {running_loss / 10:.3f}')
+            running_loss = 0.0
     print('Finished Training')
