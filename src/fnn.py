@@ -2,13 +2,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pandas as pd
+import torch.optim as optim
 
 file_name='/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name='/Users/genya/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
 #file_name='/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
-input_d=[]
-u=5
-#n=11
+u=1000
+n=0
 
 class Net(nn.Module):
 
@@ -25,16 +25,27 @@ class Net(nn.Module):
         return x
 
 for i in range(7,8):
-    
-    #df=pd.read_csv(file_name.format(i), nrows=1, usecols=[i for i in range(1,n)])
-    cols=list(pd.read_csv(file_name.format(i), nrows=1))
-    df=pd.read_csv(file_name.format(i), usecols=lambda x: x not in ['MOLECULE', 'Act'], nrows=1)
-    for col in df.columns:
-        input_d.append(col)
-    net=Net(y=int(len(input_d)))
-    print(net)    
-    
-    df=pd.read_csv(file_name.format(i), usecols=lambda x: x not in ['MOLECULE', 'Act'])
-    #df=pd.read_csv(file_name.format(i), usecols=[i for i in range(1,n)])
-    data=torch.FloatTensor(df.values)
-    print(data)
+    input_d=[]
+    df=pd.read_csv(file_name.format(i), nrows=10)
+    input_d=int(len(df.columns)-2)
+    net=Net(y=input_d)
+    print(net)
+    input=torch.FloatTensor(df.iloc[:,2:len(df.columns)].values)
+    print(input, len(df.columns))
+    target=torch.FloatTensor(df.iloc[:,1].values)
+    target=target.view(10, 1)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    for epoch in range(10):
+        running_loss = 0.0
+        optimizer.zero_grad()
+        output=net(input)
+        loss = criterion(output, target)
+        print(output)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+        #if n % 8 == 7:
+        print(f'[{epoch + 1}, {n + 1:5d}] loss: {running_loss / 10:.3f}')
+        running_loss = 0.0
+    print('Finished Training')
