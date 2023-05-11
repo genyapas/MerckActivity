@@ -10,7 +10,7 @@ file_name='/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_tra
 #file_name='/Users/genya/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
 #file_name='/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
-u = 1000
+u = 500
 n = 0
 n_iter = 500
 
@@ -39,9 +39,15 @@ for i in range(7,8):
     input_d = int(len(df.columns)-2)
     net = Net(y = input_d)
 
-    target = df.iloc[:, 1:len(df.columns)]
-    max = df.max()
-    target.div(max)
+    target = df.iloc[:, 1]
+    max = target.max()
+    target = target.div(max)
+    target = target.subtract(target.mean())
+
+    amplitude = target.max() - target.min()
+    #print(target.max(), target.min(), amplitude)
+    target = target.div(amplitude)
+    #print(target.max()-target.min())
 
     x_train = torch.FloatTensor(df.iloc[:, 2:len(df.columns)].values)
     target = torch.FloatTensor(target.values)
@@ -51,7 +57,7 @@ for i in range(7,8):
     train_loader = DataLoader(dataset = train_data, batch_size = 800, shuffle=True)
     #train_loader = DataLoader(dataset = train_data, batch_size = 900)
     criterion = nn.MSELoss()
-    optimizer = optim.SGD(net.parameters(), lr = 0.03, momentum=0.9, weight_decay=0.001)
+    optimizer = optim.SGD(net.parameters(), lr = 0.02, momentum=0.9, weight_decay=0.001)
     #optimizer = optim.SGD(net.parameters(), lr = 0.03, momentum=0.9, weight_decay=0.001)
     running_loss_list = []
 
