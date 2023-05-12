@@ -6,9 +6,10 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
 
-file_name='/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
-#file_name='/Users/genya/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
-#file_name='/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+#file_name = '/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+#file_name = '/Users/genya/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
+#file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
 u = 500
 n = 0
@@ -57,7 +58,7 @@ for i in range(7,8):
     train_loader = DataLoader(dataset = train_data, batch_size = 800, shuffle=True)
     #train_loader = DataLoader(dataset = train_data, batch_size = 900)
     criterion = nn.MSELoss()
-    optimizer = optim.SGD(net.parameters(), lr = 0.02, momentum=0.9, weight_decay=0.001)
+    optimizer = optim.SGD(net.parameters(), lr = 0.01, momentum=0.9, weight_decay=0.001)
     #optimizer = optim.SGD(net.parameters(), lr = 0.03, momentum=0.9, weight_decay=0.001)
     running_loss_list = []
 
