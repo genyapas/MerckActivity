@@ -5,9 +5,11 @@ import pandas as pd
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
+import numpy as np
 
 #file_name = '/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
-file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+file_name = '/root/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+#file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/Users/genya/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
 #file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
@@ -51,6 +53,12 @@ for i in range(7,8):
     #print(target.max()-target.min())
 
     x_train = torch.FloatTensor(df.iloc[:, 2:len(df.columns)].values)
+    #print(x_train)
+    x_train = x_train.add(2)
+    #print(x_train)
+    x_train = np.log(x_train)
+    #print(x_train)
+    
     target = torch.FloatTensor(target.values)
     train_data = TensorDataset(x_train, target)
 
