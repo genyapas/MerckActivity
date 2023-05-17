@@ -9,9 +9,9 @@ import numpy as np
 
 #file_name = '/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/root/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
-#file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/Users/genya/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
-file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
+#file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
 u = 5000
 n = 0
