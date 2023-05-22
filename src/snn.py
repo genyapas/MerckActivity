@@ -49,23 +49,16 @@ for i in range(8,9):
     target = target.subtract(target.mean())
 
     amplitude = target.max() - target.min()
-    #print(target.max(), target.min(), amplitude)
     target = target.div(amplitude)
-    #print(target.max()-target.min())
 
     x_train = torch.FloatTensor(df.iloc[:, 2:len(df.columns)].values)
-    #print(x_train)
     x_train = x_train.add(1)
-    #print(x_train)
     x_train = np.log(x_train)
-    #print(x_train)
     
     target = torch.FloatTensor(target.values)
     train_data = TensorDataset(x_train, target)
 
-    # create data loader
     train_loader = DataLoader(dataset = train_data, batch_size = 800, shuffle=True)
-    #train_loader = DataLoader(dataset = train_data, batch_size = 900)
     criterion = nn.MSELoss()
     optimizer = optim.SGD(net.parameters(), lr = 0.03, momentum=0.9, weight_decay=0.001)
     #optimizer = optim.SGD(net.parameters(), lr = 0.03, momentum=0.9, weight_decay=0.001)

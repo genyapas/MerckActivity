@@ -12,21 +12,23 @@ import numpy as np
 file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
-n_out, n_hidden, learning_rate, n_iter, batch_size = 1, 8000, 0.01, 100, 800
+u = 8000
 n = 0
+n_iter = 10
 t = n_iter
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+batch_size = 800
 
 class Net(nn.Module):
 
-    def __init__(self, n_input, n_hidden, n_out):
+    def __init__(self, y):
         super(Net, self).__init__()
-        self.fc1 = nn.Linear(n_input, n_hidden).to(device)
-        self.fc2 = nn.Linear(n_hidden, int(n_hidden/2)).to(device)
-        self.fc3 = nn.Linear(int(n_hidden/2), int(n_hidden/2)).to(device)
-        self.fc4 = nn.Linear(int(n_hidden/2), int(n_hidden/2)).to(device)
+        self.fc1 = nn.Linear(y, u).to(device)
+        self.fc2 = nn.Linear(u, int(u/2)).to(device)
+        self.fc3 = nn.Linear(int(u/2), int(u/2)).to(device)
+        self.fc4 = nn.Linear(int(u/2), int(u/2)).to(device)
         #self.fc5 = nn.Linear(int(u/2), int(u/2)).to(device)
-        self.fc5 = nn.Linear(int(n_hidden/2), 1).to(device)
+        self.fc5 = nn.Linear(int(u/2), 1).to(device)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
@@ -42,8 +44,8 @@ for i in range(8,9):
     input_d = []
 
     df = pd.read_csv(file_name.format(i))
-    n_input = int(len(df.columns)-2)
-    net = Net(n_input, n_hidden, n_out)
+    input_d = int(len(df.columns)-2)
+    net = Net(y = input_d)
     
     net.to(device)
 
@@ -59,8 +61,7 @@ for i in range(8,9):
     x_train = x_train.add(1)
     x_train = np.log(x_train)
     
-    target = target.values.reshape((-1,1))
-    target = torch.FloatTensor(target)
+    target = torch.FloatTensor(target.values)
 
     x_train = x_train.to(device)
     target = target.to(device)
@@ -69,7 +70,8 @@ for i in range(8,9):
 
     train_loader = DataLoader(dataset = train_data, batch_size = batch_size, shuffle=True)
     criterion = nn.MSELoss()
-    optimizer = optim.SGD(net.parameters(), lr = learning_rate)
+    optimizer = optim.RMSprop(net.parameters(), lr = 0.001)
+    #optimizer = optim.SGD(net.parameters(), lr = 0.03, momentum=0.9, weight_decay=0.001)
     
     running_loss_list = []
     diff = []
@@ -92,6 +94,36 @@ for i in range(8,9):
             epoch_list.append(epoch)
             running_loss_list.append(running_loss)
     
+    for n in range(l):
+        x_train = df.iloc[n, 2:len(df.columns)].values.astype(np.float64)
+        x_train = torch.tensor(x_train, dtype=torch.float64)
+        x_train = x_train.add(1)
+        x_train = np.log(x_train)
 
-    plt.scatter(epoch_list, running_loss_list)
+        target = df.iloc[n, 1]
+        target = torch.tensor(target)
+
+        amplitude = target.max() - target.min()
+        #target = target.div(amplitude)
+        #target = torch.FloatTensor(target)
+
+        x_train = x_train.to(device)
+        target = target.to(device)
+
+        #amplitude = target.max() - target.min()
+        #target = target.div(amplitude)
+        #target = torch.FloatTensor(target)
+
+        output = net(x_train.float())
+        output = output.cpu()
+        output = output.detach().numpy()
+        target = target.cpu()
+        target = target.numpy()
+
+        #print(output)
+        diff.append(((target-output)/target))
+        count.append(n)
+
+    plt.scatter(count, diff)
+    #plt.scatter(epoch_list, running_loss_list)
     plt.show()
