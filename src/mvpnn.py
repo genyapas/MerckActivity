@@ -49,13 +49,10 @@ for i in range(1, 16):
     s = 1000
     skip = sorted(random2.sample(range(1,n+1),n-s))
     df = pd.read_csv(filename, skiprows=skip)
-    #df = pd.read_csv(file_name.format(i))
     dfa.append(df)
 
 dfa = pd.concat(dfa)
 dfa = dfa.fillna(0)
-print(len(dfa.columns))
-quit()
 
 epoch_list = []
 input_d = []
