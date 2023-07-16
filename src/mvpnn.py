@@ -108,6 +108,27 @@ for epoch in range(n_iter):
 epoch_lists.append(epoch_list)
 running_loss_lists.append(running_loss_list)
 
+file_name = '/home/ewgeni/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
+
+
+for i in range(1, 16):
+    filename = file_name.format(i)
+    n = sum(1 for line in open(filename)) - 1
+    s = 1000
+    skip = sorted(random2.sample(range(1,n+1),n-s))
+    df = pd.read_csv(filename, skiprows=skip)
+    dfa.append(df)
+
+dfa = pd.concat(dfa)
+dfa = dfa.fillna(0)
+
+x_test = torch.FloatTensor(dfa.iloc[:, 2:len(dfa.columns)].values)
+x_test = x_test.add(1)
+x_test = np.log(x_test)
+
+output = net(x_test)
+print(output)
+
 for i in range(len(epoch_lists)):
     plt.scatter(epoch_lists[i], running_loss_lists[i])
 
