@@ -114,16 +114,18 @@ file_name = '/home/ewgeni/projects/MerckActivity/TestSet/ACT{}_competition_test.
 dfa = []
 output = []
 
-for i in range(1, 2):
+for i in range(1, 16):
     filename = file_name.format(i)
     df = pd.read_csv(filename)
     dfa.append(df)
 
 dfa = pd.concat(dfa, axis = 0)
 dfa = dfa.fillna(0)
-x_test = dfa.iloc[123, 1:len(dfa.columns)].values.reshape(-1, 1)
 
-x_test = torch.FloatTensor(x_test)
+x_test = np.array(dfa.iloc[123, 1:len(dfa.columns)].values, dtype = np.float16)
+#x_test = x_test.reshape(-1, 1)
+
+x_test = torch.from_numpy(x_test)
 x_test = x_test.to(device)
 
 for x in x_test:
