@@ -39,7 +39,11 @@ class Net(nn.Module):
         #x = F.relu(self.fc5(x))
         x = self.fc5(x)
         return x
-    
+
+def drop_prefix(self, prefix):
+    self.columns = self.columns.str.lstrip(prefix)
+    return self
+
 epoch_lists = []
 running_loss_lists = []
 
@@ -52,13 +56,22 @@ for i in range(1, 16):
     dfa.append(df)
 
 dfa = pd.concat(dfa, axis = 0)
-dfa = dfa.fillna(0)
+dfa = dfa.fillna(0.0)
+
+dfa1 = dfa.iloc[:, 0:2]
+
+dfa2 = dfa.iloc[:, 2:len(dfa.columns)]
+dfa2 = drop_prefix(dfa2, 'D_')
+dfa2.columns = dfa2.columns.astype(int)
+dfa2 = dfa2.reindex(sorted(dfa2.columns), axis = 1)
+
+dfa = pd.concat([dfa1, dfa2], axis=1, join='inner')
 
 epoch_list = []
 input_d = []
 
 net = Net(n_input, n_hidden, n_out)
-    
+
 net.to(device)
 
 target = dfa.iloc[:, 1]
@@ -110,25 +123,46 @@ running_loss_lists.append(running_loss_list)
 
 ##Test
 
-file_name = '/home/ewgeni/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
+file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 dfa = []
 output = []
 
 for i in range(1, 16):
     filename = file_name.format(i)
-    df = pd.read_csv(filename)
+    df = pd.read_csv(filename, nrows=1)
     dfa.append(df)
 
 dfa = pd.concat(dfa, axis = 0)
-dfa = dfa.fillna(0)
+dfa = dfa.fillna(0.0)
 
-x_test = np.array(dfa.iloc[123, 1:len(dfa.columns)].values, dtype = np.float16)
+dfa1 = dfa.iloc[:, 0:1]
+
+dfa2 = dfa.iloc[:, 2:len(dfa.columns)]
+dfa2 = drop_prefix(dfa2, 'D_')
+dfa2.columns = dfa2.columns.astype(int)
+dfa2 = dfa2.reindex(sorted(dfa2.columns), axis = 1)
+
+dfa = pd.concat([dfa1, dfa2], axis=1, join='inner')
+
+x_test = dfa.iloc[:, 1:len(dfa.columns)].values
+
+testrow = torch.FloatTensor(x_test[1, :])
+testrow = testrow.to(device)
+
+act = net(testrow)
+print(act)
+quit()
+#x_test = np.array(dfa.iloc[123, 1:len(dfa.columns)].values, dtype = np.float16)
 #x_test = x_test.reshape(-1, 1)
 
 x_test = torch.from_numpy(x_test)
 x_test = x_test.to(device)
+print(type(x_test))
+act = net(x_test)
 
 for x in x_test:
+    print(x.dim(), x)
+    quit()
     act = net(x)
     output.append(act)
 #x_test = x_test.add(1)
