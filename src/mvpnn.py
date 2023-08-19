@@ -77,6 +77,7 @@ net.to(device)
 target = dfa.iloc[:, 1]
 max = target.max()
 target = target.div(max)
+target_mean = target.mean()
 target = target.subtract(target.mean())
 
 amplitude = target.max() - target.min()
@@ -145,15 +146,25 @@ dfa2 = dfa2.reindex(sorted(dfa2.columns), axis = 1)
 dfa = pd.concat([dfa1, dfa2], axis=1, join='inner')
 
 x_test = dfa.iloc[:, 1:len(dfa.columns)].values
+x_test = x_train.detach().cpu().add(1)      #why is it on gpu already
+x_test = np.log(x_test)
 
 testrow = torch.FloatTensor(x_test[1, :])
+
 testrow = testrow.to(device)
+x_test = x_test.to(device)
 
 act = net(testrow)
-print(act)
+
+#Resize
+act = act.detach().cpu().numpy()
+
+act = act*amplitude
+act = act+target_mean
+act = act*max
+
+print(act, type(act))
 quit()
-#x_test = np.array(dfa.iloc[123, 1:len(dfa.columns)].values, dtype = np.float16)
-#x_test = x_test.reshape(-1, 1)
 
 x_test = torch.from_numpy(x_test)
 x_test = x_test.to(device)
