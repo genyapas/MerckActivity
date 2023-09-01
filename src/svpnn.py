@@ -122,6 +122,10 @@ for epoch in range(n_iter):
 epoch_lists.append(epoch_list)
 running_loss_lists.append(running_loss_list)
 
+##Feeing up memory
+del x_train
+del target
+
 ##Test
 
 file_name = '/home/ewgeni/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
@@ -133,35 +137,27 @@ for i in range(1, 16):
     df = pd.read_csv(filename)
     dfa.append(df)
 
-    dfa = pd.concat(dfa, axis = 0)
-    dfa = dfa.fillna(0.0)
+dfa = pd.concat(dfa, axis = 0)
+dfa = dfa.fillna(0.0)
 
-    dfa1 = dfa.iloc[:, 0:1]
+dfa1 = dfa.iloc[:, 0:1]
 
-    dfa2 = dfa.iloc[:, 2:len(dfa.columns)]
-    dfa2 = drop_prefix(dfa2, 'D_')
-    dfa2.columns = dfa2.columns.astype(int)
-    dfa2 = dfa2.reindex(sorted(dfa2.columns), axis=1)
+dfa2 = dfa.iloc[:, 1:len(dfa.columns)]
+dfa2 = drop_prefix(dfa2, 'D_')
+dfa2.columns = dfa2.columns.astype(int)
+dfa2 = dfa2.reindex(sorted(dfa2.columns), axis=1)
 
-    dfa = pd.concat([dfa1, dfa2], axis=1, join='inner')
+dfa = pd.concat([dfa1, dfa2], axis=1, join='inner')
 
-    x_test = dfa.iloc[:, 1:len(dfa.columns)].values
-    x_test = x_test + 1
-    x_test = np.log(x_test)
+x_test = dfa.iloc[:, 1:len(dfa.columns)].values
+x_test = x_test + 1
+x_test = np.log(x_test)
 
-    x_test = torch.FloatTensor(x_test)
-    x_test = x_test.to(device)
+x_test = torch.FloatTensor(x_test)
 
-    for x in x_test:
-        act = net(x)
-        # Resize
-        act = act.detach().cpu().numpy()
+x_test = x_test.to(device)
+counter = 0
 
-        act = act * amplitude
-        act = act + target_mean
-        act = act * max
-
-        preds.append(act)
-
-preds = "\n".join(str(item[0]) for item in preds)
-print(preds, len(preds))
+preds = net(x_test).tolist()
+preds = [(pred * amplitude + target_mean) * max for pred in preds]
+print(preds, len(preds), type(preds))
