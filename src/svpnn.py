@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import random2
+import time
 
 #file_name = '/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/root/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
@@ -105,6 +106,9 @@ n = 0
 l = len(list(dfa.index))
 count = []
 
+#timestamp1
+t1 = time.time()
+
 for epoch in range(n_iter):
     running_loss = 0
     
@@ -121,6 +125,9 @@ for epoch in range(n_iter):
         running_loss_list.append(running_loss)
 epoch_lists.append(epoch_list)
 running_loss_lists.append(running_loss_list)
+
+#timestamp2 and diff
+tt = time.time() - t1
 
 ##Feeing up memory
 del x_train
