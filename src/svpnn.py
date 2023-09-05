@@ -163,8 +163,7 @@ x_test = np.log(x_test)
 x_test = torch.FloatTensor(x_test)
 
 x_test = x_test.to(device)
-counter = 0
 
 preds = net(x_test).tolist()
-preds = [(pred * amplitude + target_mean) * max for pred in preds]
-print(preds, len(preds), type(preds))
+preds = [(pred * amplitude + target_mean) * max for sublist in preds for pred in sublist]
+print(len(preds), type(preds), 'Trainingtime: ', tt, 's')
