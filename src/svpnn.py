@@ -9,8 +9,6 @@ import numpy as np
 import random2
 import time
 
-#file_name = '/Users/genya/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
-#file_name = '/root/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
@@ -136,6 +134,7 @@ del target
 ##Test
 
 file_name = '/home/ewgeni/projects/MerckActivity/TestSet/ACT{}_competition_test.csv'
+
 dfa = []
 preds = []
 
