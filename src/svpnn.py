@@ -12,7 +12,7 @@ import time
 file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
-n_out, n_hidden, learning_rate, n_iter, batch_size, n_input, dfa = 1, 8000, 0.01, 10, 8000, 11080, []
+n_out, n_hidden, learning_rate, n_iter, batch_size, n_input, dfa = 1, 8000, 0.01, 500, 8000, 11080, []
 n = 0
 t = n_iter
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -111,6 +111,7 @@ for epoch in range(n_iter):
     running_loss = 0
     
     for x_train, target in train_loader:
+        loss0 = running_loss
         optimizer.zero_grad()
         output = net(x_train)
         loss = criterion(output, target)
@@ -121,8 +122,18 @@ for epoch in range(n_iter):
         print(running_loss, epoch)
         epoch_list.append(epoch)
         running_loss_list.append(running_loss)
+        #if abs(running_loss - loss0) < running_loss * 0.45:
+        #    nepoch = epoch
+        #    break
 epoch_lists.append(epoch_list)
 running_loss_lists.append(running_loss_list)
+
+for i in range(len(epoch_lists)):
+    plt.scatter(epoch_lists[i], running_loss_lists[i])
+
+plt.show()
+
+quit()
 
 #timestamp2 and diff
 tt = time.time() - t1
@@ -165,4 +176,4 @@ x_test = x_test.to(device)
 
 preds = net(x_test).tolist()
 preds = [(pred * amplitude + target_mean) * max for sublist in preds for pred in sublist]
-print(len(preds), type(preds), 'Trainingtime: ', tt, 's')
+print(len(preds), str(type(preds)) + '\n' + 'Trainingtime: ' + str(tt) + 's', 'for ' + str(nepoch) + ' epochs')
