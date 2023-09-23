@@ -12,7 +12,7 @@ import time
 file_name = '/home/ewgeni/projects/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 #file_name = '/home/ipasichn/MerckActivity/TrainingSet/ACT{}_competition_training.csv'
 
-n_out, n_hidden, learning_rate, n_iter, batch_size, n_input, dfa = 1, 8000, 0.01, 500, 8000, 11080, []
+n_out, n_hidden, learning_rate, n_iter, batch_size, n_input, dfa = 1, 8000, 0.01, 1000000, 8000, 11080, []
 n = 0
 t = n_iter
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -122,9 +122,9 @@ for epoch in range(n_iter):
         print(running_loss, epoch)
         epoch_list.append(epoch)
         running_loss_list.append(running_loss)
-        #if abs(running_loss - loss0) < running_loss * 0.45:
-        #    nepoch = epoch
-        #    break
+        if abs(running_loss - loss0) < loss0 * 0.45 and running_loss < 0.02:
+            nepoch = epoch
+            break
 epoch_lists.append(epoch_list)
 running_loss_lists.append(running_loss_list)
 
@@ -132,8 +132,6 @@ for i in range(len(epoch_lists)):
     plt.scatter(epoch_lists[i], running_loss_lists[i])
 
 plt.show()
-
-quit()
 
 #timestamp2 and diff
 tt = time.time() - t1
