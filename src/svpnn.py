@@ -174,4 +174,4 @@ x_test = x_test.to(device)
 
 preds = net(x_test).tolist()
 preds = [(pred * amplitude + target_mean) * max for sublist in preds for pred in sublist]
-print(len(preds), str(type(preds)) + '\n' + 'Trainingtime: ' + str(tt) + 's', 'for ' + str(nepoch) + ' epochs')
+print('\n' + 'Trainingtime: ' + str(tt) + 's', 'for ' + str(nepoch) + ' epochs')
