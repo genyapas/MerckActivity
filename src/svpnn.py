@@ -16,8 +16,6 @@ n_out, n_hidden, learning_rate, n_iter, batch_size, n_input, dfa = 1, 8000, 0.01
 n = 0
 t = n_iter
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#fig, axes = plt.subplots(nrows = 2, ncols = 2)
-
 
 class Net(nn.Module):
 
@@ -27,7 +25,6 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(n_hidden, int(n_hidden/2)).to(device)
         self.fc3 = nn.Linear(int(n_hidden/2), int(n_hidden/2)).to(device)
         self.fc4 = nn.Linear(int(n_hidden/2), int(n_hidden/2)).to(device)
-        #self.fc5 = nn.Linear(int(u/2), int(u/2)).to(device)
         self.fc5 = nn.Linear(int(n_hidden/2), 1).to(device)
 
     def forward(self, x):
@@ -35,7 +32,6 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
         x = F.relu(self.fc4(x))
-        #x = F.relu(self.fc5(x))
         x = self.fc5(x)
         return x
 
